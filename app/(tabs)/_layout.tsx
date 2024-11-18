@@ -51,7 +51,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "add-circle" : "add-circle-outline"}
-              color={color}
+              color="#00ff00"
               size={24}
             />
           ),
