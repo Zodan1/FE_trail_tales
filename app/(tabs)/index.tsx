@@ -8,6 +8,13 @@ export default function Index() {
       <Link href="/about" style={styles.button}>
         Go to About screen
       </Link>
+      <Link href="/posts" style={styles.button}>
+        Go to Post screen
+      </Link>
+      <Link href="/add" style={styles.button}>
+        Go to Add screen
+      </Link>
+
       <Link href="/test" style={styles.button}>
         Go to test screen
       </Link>
