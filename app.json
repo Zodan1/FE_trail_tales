@@ -38,7 +38,7 @@
       "typedRoutes": true
     },
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/Splash2.png",
       "resizeMode": "contain",
       "backgroundColor": "#25292e"
     }
