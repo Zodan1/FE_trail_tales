@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function TabLayout() {
   return (
@@ -56,6 +57,21 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="leader"
+        options={{
+          title: "LeaderBoard",
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialIcons
+              name={focused ? "leaderboard" : "leaderboard"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="about"
         options={{

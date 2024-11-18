@@ -14,7 +14,9 @@ export default function Index() {
       <Link href="/add" style={styles.button}>
         Go to Add screen
       </Link>
-
+      <Link href="/leader" style={styles.button}>
+        Go to Leader screen
+      </Link>
       <Link href="/test" style={styles.button}>
         Go to test screen
       </Link>
