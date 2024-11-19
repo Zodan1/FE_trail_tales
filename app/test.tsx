@@ -102,7 +102,7 @@ export default function TestScreen() {
             title={"Your Location"}
             description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
           >
-            <Ionicons name="location" size={24} color="black" />
+            <Ionicons name="location" size={24} color="red" />
           </Marker>
         </MapView>
       ) : (
