@@ -19,7 +19,75 @@ import EmojiSticker from "@/components/EmojiSticker";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
+interface LocationCoords {
+  latitude: number;
+  longitude: number;
+}
+
 export default function Add() {
+  //camera take photo code below.
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [location, setLocation] = useState<LocationCoords | null>(null);
+  const pickImage = async () => {
+    try {
+      const permissionResult =
+        await ImagePicker.requestCameraPermissionsAsync();
+      if (!permissionResult.granted) {
+        Alert.alert("Camera access is required to take a photo.");
+        return;
+      }
+
+      const result: ImagePicker.ImagePickerResult =
+        await ImagePicker.launchCameraAsync({
+          mediaTypes: "images",
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+
+      if (result.assets && result.assets.length > 0) {
+        setPhotoUri(result.assets[0].uri);
+        getLocation();
+      } else {
+        Alert.alert("No photo taken.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error taking photo:", error.message);
+      } else {
+        Alert.alert("An unknown error occurred.");
+      }
+    }
+  };
+
+  const getLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+        return;
+      }
+
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      if (currentLocation && currentLocation.coords) {
+        setLocation({
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        });
+      } else {
+        Alert.alert("Could not fetch location.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error fetching location:", error.message);
+      } else {
+        Alert.alert("An unknown error occurred.");
+      }
+    }
+  };
+
+  //upload photo code below
+
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined
   );
@@ -78,6 +146,8 @@ export default function Add() {
     }
   };
 
+  //return functions
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.imageContainer}>
@@ -105,12 +175,43 @@ export default function Add() {
         </View>
       ) : (
         <View style={styles.footerContainer}>
-          <Button theme="camera" label="Take photo" onPress={pickImageAsync} />
+          <Button theme="camera" label="Take photo" onPress={pickImage} />
           <Button theme="primary" label="upload" onPress={pickImageAsync} />
           <Button
             label="Use this photo"
             onPress={() => setShowAppOptions(true)}
           />
+          {photoUri && location && (
+            <View style={styles.imageContainer}>
+              <Text>Your photo and location:</Text>
+              <Image source={{ uri: photoUri }} style={styles.image} />
+            </View>
+          )}
+
+          {location ? (
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                title={"Your Location"}
+                description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
+              >
+                <Ionicons name="location" size={24} color="red" />
+              </Marker>
+            </MapView>
+          ) : (
+            <Text>Loading location...</Text>
+          )}
         </View>
       )}
       <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
@@ -140,5 +241,17 @@ const styles = StyleSheet.create({
   optionsRow: {
     alignItems: "center",
     flexDirection: "row",
+  },
+  image: {
+    width: 300,
+    height: 300,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "black",
+  },
+  map: {
+    width: "100%",
+    height: "50%",
+    marginTop: 20,
   },
 });
