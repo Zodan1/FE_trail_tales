@@ -1,10 +1,13 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as MediaLibrary from "expo-media-library";
 import { captureRef } from "react-native-view-shot";
 import { type ImageSource } from "expo-image";
+import * as Location from "expo-location";
+import MapView, { Marker } from "react-native-maps";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
@@ -102,11 +105,8 @@ export default function Add() {
         </View>
       ) : (
         <View style={styles.footerContainer}>
-          <Button
-            theme="primary"
-            label="Choose a photo"
-            onPress={pickImageAsync}
-          />
+          <Button theme="camera" label="Take photo" onPress={pickImageAsync} />
+          <Button theme="primary" label="upload" onPress={pickImageAsync} />
           <Button
             label="Use this photo"
             onPress={() => setShowAppOptions(true)}
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   footerContainer: {
-    flex: 1 / 3,
+    flex: 1 / 2,
     alignItems: "center",
   },
   optionsContainer: {
