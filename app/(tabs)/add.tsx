@@ -7,6 +7,7 @@ import { captureRef } from "react-native-view-shot";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { type ImageSource } from "expo-image";
 
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
