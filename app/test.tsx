@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Button, Text, Image, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
-import MapView, { Marker } from 'react-native-maps';
+import React, { useState } from "react";
+import { StyleSheet, View, Button, Text, Image, Alert } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
+import MapView, { Marker } from "react-native-maps";
 
 // Define types for location state
 interface LocationCoords {
@@ -16,30 +16,32 @@ export default function TestScreen() {
 
   const pickImage = async () => {
     try {
-      const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+      const permissionResult =
+        await ImagePicker.requestCameraPermissionsAsync();
       if (!permissionResult.granted) {
         Alert.alert("Camera access is required to take a photo.");
         return;
       }
 
-      const result: ImagePicker.ImagePickerResult = await ImagePicker.launchCameraAsync({
-        mediaTypes: 'images',
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
+      const result: ImagePicker.ImagePickerResult =
+        await ImagePicker.launchCameraAsync({
+          mediaTypes: "images",
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
 
       if (result.assets && result.assets.length > 0) {
         setPhotoUri(result.assets[0].uri);
         getLocation();
       } else {
-        Alert.alert('No photo taken.');
+        Alert.alert("No photo taken.");
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Error taking photo:', error.message);
+        Alert.alert("Error taking photo:", error.message);
       } else {
-        Alert.alert('An unknown error occurred.');
+        Alert.alert("An unknown error occurred.");
       }
     }
   };
@@ -47,8 +49,8 @@ export default function TestScreen() {
   const getLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission to access location was denied');
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
         return;
       }
 
@@ -59,13 +61,13 @@ export default function TestScreen() {
           longitude: currentLocation.coords.longitude,
         });
       } else {
-        Alert.alert('Could not fetch location.');
+        Alert.alert("Could not fetch location.");
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Error fetching location:', error.message);
+        Alert.alert("Error fetching location:", error.message);
       } else {
-        Alert.alert('An unknown error occurred.');
+        Alert.alert("An unknown error occurred.");
       }
     }
   };
@@ -111,24 +113,26 @@ export default function TestScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 50,
   },
   imageContainer: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   image: {
     width: 300,
     height: 300,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: 'black',
+    borderColor: "black",
   },
   map: {
-    width: '100%',
-    height: '50%',
+    width: "100%",
+    height: "50%",
     marginTop: 20,
   },
 });
+
+//move into app tab
