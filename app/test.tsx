@@ -3,6 +3,7 @@ import { StyleSheet, View, Button, Text, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Define types for location state
 interface LocationCoords {
@@ -100,8 +101,9 @@ export default function TestScreen() {
             }}
             title={"Your Location"}
             description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
-            icon={photoUri ? { uri: photoUri } : undefined}
-          />
+          >
+            <Ionicons name="location" size={24} color="black" />
+          </Marker>
         </MapView>
       ) : (
         <Text>Loading location...</Text>
