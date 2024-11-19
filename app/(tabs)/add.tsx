@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as MediaLibrary from "expo-media-library";
 import { captureRef } from "react-native-view-shot";
-import { type ImageSource } from "expo-image";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -25,9 +24,25 @@ interface LocationCoords {
 }
 
 export default function Add() {
-  //camera take photo code below.
+  // State management
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [location, setLocation] = useState<LocationCoords | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
+  const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [pickedEmoji, setPickedEmoji] = useState<ImageSource | undefined>(
+    undefined
+  );
+  const [status, requestPermission] = MediaLibrary.usePermissions();
+  const imageRef = useRef<View>(null);
+
+  if (status === null) {
+    requestPermission();
+  }
+
+  // Camera and image handling
   const pickImage = async () => {
     try {
       const permissionResult =
@@ -41,12 +56,13 @@ export default function Add() {
         await ImagePicker.launchCameraAsync({
           mediaTypes: "images",
           allowsEditing: true,
-          aspect: [4, 3],
+          aspect: [3, 3],
           quality: 1,
         });
 
       if (result.assets && result.assets.length > 0) {
         setPhotoUri(result.assets[0].uri);
+        setSelectedImage(result.assets[0].uri); // Set the selected image
         getLocation();
       } else {
         Alert.alert("No photo taken.");
@@ -86,27 +102,12 @@ export default function Add() {
     }
   };
 
-  //upload photo code below
-
-  const [selectedImage, setSelectedImage] = useState<string | undefined>(
-    undefined
-  );
-  const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [pickedEmoji, setPickedEmoji] = useState<ImageSource | undefined>(
-    undefined
-  );
-  const [status, requestPermission] = MediaLibrary.usePermissions();
-  const imageRef = useRef<View>(null);
-
-  if (status === null) {
-    requestPermission();
-  }
-
+  // Image upload and handling
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
       allowsEditing: true,
+      aspect: [3, 3],
       quality: 1,
     });
 
@@ -146,15 +147,13 @@ export default function Add() {
     }
   };
 
-  //return functions
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.imageContainer}>
         <View ref={imageRef} collapsable={false}>
           <ImageViewer
             imgSource={PlaceholderImage}
-            selectedImage={selectedImage}
+            selectedImage={photoUri || selectedImage} // Display photoUri or selectedImage
           />
           {pickedEmoji && (
             <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
