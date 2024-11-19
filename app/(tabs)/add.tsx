@@ -155,6 +155,30 @@ export default function Add() {
             imgSource={PlaceholderImage}
             selectedImage={photoUri || selectedImage} // Display photoUri or selectedImage
           />
+          {location ? (
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                title={"Your Location"}
+                description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
+              >
+                <Ionicons name="location" size={24} color="red" />
+              </Marker>
+            </MapView>
+          ) : (
+            <Text>Loading location...</Text>
+          )}
           {pickedEmoji && (
             <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
           )}
@@ -180,37 +204,6 @@ export default function Add() {
             label="Use this photo"
             onPress={() => setShowAppOptions(true)}
           />
-          {photoUri && location && (
-            <View style={styles.imageContainer}>
-              <Text>Your photo and location:</Text>
-              <Image source={{ uri: photoUri }} style={styles.image} />
-            </View>
-          )}
-
-          {location ? (
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-            >
-              <Marker
-                coordinate={{
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                }}
-                title={"Your Location"}
-                description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
-              >
-                <Ionicons name="location" size={24} color="red" />
-              </Marker>
-            </MapView>
-          ) : (
-            <Text>Loading location...</Text>
-          )}
         </View>
       )}
       <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
@@ -230,7 +223,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   footerContainer: {
-    flex: 1 / 2,
+    flex: 1 / 2.5,
     alignItems: "center",
   },
   optionsContainer: {
@@ -241,16 +234,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
   },
-  image: {
-    width: 300,
-    height: 300,
-    borderRadius: 10,
+  map: {
+    flex: 1,
+    width: 320,
+    height: 200,
+    borderRadius: 18,
     borderWidth: 2,
     borderColor: "black",
-  },
-  map: {
-    width: "100%",
-    height: "50%",
-    marginTop: 20,
+    alignItems: "center",
   },
 });
