@@ -23,7 +23,7 @@ export default function TestScreen() {
       }
 
       const result: ImagePicker.ImagePickerResult = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaType.Images,
+        mediaTypes: 'images',
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
