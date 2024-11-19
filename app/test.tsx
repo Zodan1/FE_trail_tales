@@ -3,50 +3,73 @@ import { StyleSheet, View, Button, Text, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
-import { Image as RNImage } from 'react-native';
 
+// Define types for location state
+interface LocationCoords {
+  latitude: number;
+  longitude: number;
+}
 
 export default function TestScreen() {
-  
-  const [photoUri, setPhotoUri] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [location, setLocation] = useState<LocationCoords | null>(null);
 
-  // Function to request camera permissions and pick an image
   const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-    if (permissionResult.granted === false) {
-      alert("Camera access is required to take a photo.");
-      return;
-    }
+    try {
+      const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permissionResult.granted) {
+        Alert.alert("Camera access is required to take a photo.");
+        return;
+      }
 
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: 'images',
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+      const result: ImagePicker.ImagePickerResult = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaType.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    if (!result.canceled) {
-      setPhotoUri(result.assets[0].uri);
-      getLocation();
-    } else {
-      alert('No photo taken.');
+      if (result.assets && result.assets.length > 0) {
+        setPhotoUri(result.assets[0].uri);
+        getLocation();
+      } else {
+        Alert.alert('No photo taken.');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error taking photo:', error.message);
+      } else {
+        Alert.alert('An unknown error occurred.');
+      }
     }
   };
 
-  // Function to get current location of the user
   const getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission to access location was denied');
-      return;
-    }
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission to access location was denied');
+        return;
+      }
 
-    let currentLocation = await Location.getCurrentPositionAsync({});
-    setLocation(currentLocation.coords);
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      if (currentLocation && currentLocation.coords) {
+        setLocation({
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        });
+      } else {
+        Alert.alert('Could not fetch location.');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error fetching location:', error.message);
+      } else {
+        Alert.alert('An unknown error occurred.');
+      }
+    }
   };
 
-  // Render Map and Image only if location and photoUri are available
   return (
     <View style={styles.container}>
       <Button title="Take a Photo" onPress={pickImage} />
@@ -75,11 +98,8 @@ export default function TestScreen() {
             }}
             title={"Your Location"}
             description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
-          >
-            {photoUri && (
-              <RNImage source={{ uri: photoUri }} style={{ width: 40, height: 40 }} />
-            )}
-          </Marker>
+            icon={photoUri ? { uri: photoUri } : undefined}
+          />
         </MapView>
       ) : (
         <Text>Loading location...</Text>
@@ -87,10 +107,6 @@ export default function TestScreen() {
     </View>
   );
 }
-
-
-
-
 
 const styles = StyleSheet.create({
   container: {
