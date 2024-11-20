@@ -27,3 +27,15 @@ export function fetchPosts() {
       throw error;
     });
 }
+
+export function fetchPostById(post_id) {
+  return api
+    .get(`/posts/${post_id}`)
+    .then((response) => {
+      return response.data.post;
+    })
+    .catch((error) => {
+      console.error("Error fetching post by ID", error);
+      throw error;
+    });
+}

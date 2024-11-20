@@ -1,6 +1,6 @@
-// PostCard.tsx
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
 interface PostCardProps {
   post: {
@@ -14,18 +14,24 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
+  const router = useRouter();
+
   return (
-    <View style={styles.card}>
-      <Image source={{ uri: post.post_img }} style={styles.image} />
-      <View style={styles.textContainer}>
-        <Text style={styles.username}>User: {post.username}</Text>
-        <Text style={styles.description}>{post.description}</Text>
-        <Text style={styles.createdAt}>
-          Posted on: {new Date(post.created_at).toLocaleString()}
-        </Text>
-        <Text style={styles.location}>Location: {post.location}</Text>
+    <TouchableOpacity
+      onPress={() => router.push(`../app/PostPage?post_id=${post.post_id}`)}
+    >
+      <View style={styles.card}>
+        <Image source={{ uri: post.post_img }} style={styles.image} />
+        <View style={styles.textContainer}>
+          <Text style={styles.username}>User: {post.username}</Text>
+          <Text style={styles.description}>{post.description}</Text>
+          <Text style={styles.createdAt}>
+            Posted on: {new Date(post.created_at).toLocaleString()}
+          </Text>
+          <Text style={styles.location}>Location: {post.location}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
