@@ -15,3 +15,15 @@ export function fetchUserByUsername(username) {
       throw error;
     });
 }
+
+export function fetchPosts() {
+  return api
+    .get("/posts")
+    .then((response) => {
+      return response.data.posts;
+    })
+    .catch((error) => {
+      console.error("Error fetching posts", error);
+      throw error;
+    });
+}
