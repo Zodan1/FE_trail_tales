@@ -20,6 +20,9 @@ export default function Index() {
       <Link href="/test" style={styles.button}>
         Go to test screen
       </Link>
+      <Link href="/PostPage" style={styles.button}>
+        Go to PostPage screen
+      </Link>
     </View>
   );
 }
