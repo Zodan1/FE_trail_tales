@@ -16,7 +16,7 @@ export default function AboutScreen() {
   const [error, setError] = useState<string | null>(null); // Define error state with string type
 
   useEffect(() => {
-    const username = "happyBird"; // Replace with dynamic username if needed
+    const username = "nature_lover"; // Replace with dynamic username if needed
     fetchUserByUsername(username)
       .then((data) => {
         setUser(data);
