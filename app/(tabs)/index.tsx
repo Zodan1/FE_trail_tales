@@ -23,8 +23,8 @@ interface Post {
   description: string;
   created_at: string;
   location_coord: {
-    x: number; // longitude
-    y: number; // latitude
+    x: number; // latitude
+    y: number; // longitude
   };
 }
 
@@ -111,8 +111,8 @@ export default function Index() {
             <Marker
               key={post.post_id}
               coordinate={{
-                latitude: post.location_coord.y, // latitude
-                longitude: post.location_coord.x, // longitude
+                latitude: post.location_coord.x, // latitude
+                longitude: post.location_coord.y, // longitude
               }}
               title={post.username}
               description={post.description}
