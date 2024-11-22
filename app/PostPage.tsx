@@ -50,7 +50,7 @@ export default function PostPageScreen() {
   return (
     <View style={styles.container}>
       {post ? (
-        <>
+        <View style={styles.container}>
           <Image source={{ uri: post.post_img }} style={styles.postImage} />
           <Text style={styles.text}>Username: {post.username}</Text>
           <Text style={styles.text}>Description: {post.description}</Text>
@@ -58,7 +58,7 @@ export default function PostPageScreen() {
             Posted on: {new Date(post.created_at).toLocaleString()}
           </Text>
           <Text style={styles.text}>Location: {post.location}</Text>
-        </>
+        </View>
       ) : (
         <Text style={styles.text}>Post not found.</Text>
       )}
