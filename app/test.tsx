@@ -4,6 +4,13 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = "https://your-supabase-url"; //replace with TT SB URL
+const supabaseKey = "your-supabase-key"; //replace with TT SB key
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+import { supabase } from "./supabaseClient"; // Adjust the import according to your file structure
 
 // Define types for location state
 interface LocationCoords {
@@ -14,6 +21,9 @@ interface LocationCoords {
 export default function TestScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [location, setLocation] = useState<LocationCoords | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
 
   const pickImage = async () => {
     try {
@@ -26,14 +36,32 @@ export default function TestScreen() {
 
       const result: ImagePicker.ImagePickerResult =
         await ImagePicker.launchCameraAsync({
-          mediaTypes: "images",
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
-          aspect: [4, 3],
+          aspect: [3, 3],
           quality: 1,
         });
 
       if (result.assets && result.assets.length > 0) {
-        setPhotoUri(result.assets[0].uri);
+        const photoUri = result.assets[0].uri;
+        setPhotoUri(photoUri);
+        setSelectedImage(photoUri); // Set the selected image
+
+        const response = await fetch(photoUri);
+        const blob = await response.blob();
+
+        const { data, error } = await supabase.storage
+          .from("your-bucket-name")
+          .upload(`images/${new Date().getTime()}.jpg`, blob);
+
+        if (error) {
+          Alert.alert("Error uploading image:", error.message);
+        } else {
+          Alert.alert("Image uploaded successfully!");
+          // Store the image URL or path in your database as needed
+          console.log("Uploaded image URL:", data?.Key);
+        }
+
         getLocation();
       } else {
         Alert.alert("No photo taken.");
