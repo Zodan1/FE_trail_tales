@@ -16,9 +16,9 @@ export function fetchUserByUsername(username) {
     });
 }
 
-export function fetchPosts() {
+export function fetchPosts(username) {
   return api
-    .get("/posts")
+    .get(`/posts/${username}`)
     .then((response) => {
       return response.data.posts;
     })
@@ -28,9 +28,9 @@ export function fetchPosts() {
     });
 }
 
-export function fetchPostById(post_id) {
+export function fetchPostById(post_id,username) {
   return api
-    .get(`/posts/${post_id}`)
+    .get(`/posts/${post_id}/${username}`)
     .then((response) => {
       return response.data.post;
     })
@@ -39,3 +39,57 @@ export function fetchPostById(post_id) {
       throw error;
     });
 }
+
+////////////
+export function postFavourite(username, post_id) {
+  return api
+    .post("/favourites", { username, post_id })
+    .then((response) => {
+      console.log("API response: ", response);  
+      if (response && response.data && response.data.favouriteData) {
+        return { success: true, favouriteData: response.data.favouriteData };
+      } else {
+        throw new Error("Unexpected response structure.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error adding favourite", error);
+      return { success: false, error: error.message || "Unknown error" };
+    });
+}
+
+
+export function fetchFavourites(username) {
+  return api
+    .get(`/users/${username}/favourites`)
+    .then((response) => response.data.favourites)
+    .catch((error) => {
+      console.error("Error fetching favourites", error);
+      throw error;
+    });
+}
+
+export async function deleteFavourite(username, post_id) {
+  try {
+    const response = await api.delete(`/users/${username}/favourites/${post_id}`);
+    // Check for successful deletion (204 No Content)
+    if (response.status === 204) {
+      return { success: true };
+    } else {
+      throw new Error("Unexpected response status code");
+    }
+  } catch (error) {
+    console.error("Error deleting favourite", error);
+    return { success: false, error: error.message || "Unknown error" };
+  }
+}
+
+// export function fetchNearbyPosts(latitude, longitude,radius, location) {
+//   return api
+//     .get(`/postsByMap?latitude=${location?.latitude}&longitude=${location?.longitude}&radius=10`)
+//     .then((response) => response.data.posts)
+//     .catch((error) => {
+//       console.error("Error fetching nearby posts", error);
+//       throw error;
+//     });
+// }

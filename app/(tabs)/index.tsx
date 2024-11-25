@@ -23,8 +23,8 @@ interface Post {
   description: string;
   created_at: string;
   location_coord: {
-    x: number; // longitude
-    y: number; // latitude
+    x: number; // latitude
+    y: number; // longitude
   };
 }
 
@@ -66,7 +66,7 @@ export default function Index() {
   const fetchNearbyPosts = async () => {
     try {
       const response = await fetch(
-        `https://trail-tales-be.onrender.com/api/posts?latitude=${location?.latitude}&longitude=${location?.longitude}&radius=10`
+        `https://trail-tales-be.onrender.com/api/postsByMap?latitude=${location?.latitude}&longitude=${location?.longitude}&radius=20000000000000`
       );
       if (!response.ok) throw new Error("Failed to fetch nearby posts.");
       const data = await response.json();
@@ -111,8 +111,8 @@ export default function Index() {
             <Marker
               key={post.post_id}
               coordinate={{
-                latitude: post.location_coord.y, // latitude
-                longitude: post.location_coord.x, // longitude
+                latitude: post.location_coord.x, // latitude
+                longitude: post.location_coord.y, // longitude
               }}
               title={post.username}
               description={post.description}
