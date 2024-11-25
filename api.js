@@ -16,9 +16,9 @@ export function fetchUserByUsername(username) {
     });
 }
 
-export function fetchPosts() {
+export function fetchPosts(username) {
   return api
-    .get("/posts")
+    .get(`/posts/${username}`)
     .then((response) => {
       return response.data.posts;
     })
@@ -28,14 +28,26 @@ export function fetchPosts() {
     });
 }
 
-export function fetchPostById(post_id) {
+export function fetchPostById(post_id, username) {
   return api
-    .get(`/posts/${post_id}`)
+    .get(`/posts/${post_id}/${username}`)
     .then((response) => {
       return response.data.post;
     })
     .catch((error) => {
       console.error("Error fetching post by ID", error);
+      throw error;
+    });
+}
+
+export function fetchUsers() {
+  return api
+    .get("/users")
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching users", error);
       throw error;
     });
 }
