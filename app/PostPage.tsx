@@ -61,8 +61,11 @@ export default function PostPageScreen() {
           <Text style={styles.text}>Location: {post.location}</Text>
         </View>
       ) : (
-        <Text style={styles.text}>Post not found.</Text>
+          <Text style={styles.text}>Post not found.</Text>
+          
       )}
+      console.log("Post data is null or undefined.");
+
     </View>
   );
 }
