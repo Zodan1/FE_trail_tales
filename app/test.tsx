@@ -36,7 +36,7 @@ export default function TestScreen() {
 
       const result: ImagePicker.ImagePickerResult =
         await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          mediaTypes: "images",
           allowsEditing: true,
           aspect: [3, 3],
           quality: 1,
@@ -51,7 +51,7 @@ export default function TestScreen() {
         const blob = await response.blob();
 
         const { data, error } = await supabase.storage
-          .from("your-bucket-name")
+          .from("your-bucket-name") //replace with TT bucket name
           .upload(`images/${new Date().getTime()}.jpg`, blob);
 
         if (error) {
