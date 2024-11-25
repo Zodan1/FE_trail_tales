@@ -42,7 +42,6 @@ export function fetchPostById(post_id,username) {
 }
 
 
-////////////
 export function postFavourite(username, post_id) {
   return api
     .post("/favourites", { username, post_id })
@@ -85,16 +84,6 @@ export async function deleteFavourite(username, post_id) {
     return { success: false, error: error.message || "Unknown error" };
   }
 }
-
-// export function fetchNearbyPosts(latitude, longitude,radius, location) {
-//   return api
-//     .get(`/postsByMap?latitude=${location?.latitude}&longitude=${location?.longitude}&radius=10`)
-//     .then((response) => response.data.posts)
-//     .catch((error) => {
-//       console.error("Error fetching nearby posts", error);
-//       throw error;
-//     });
-// }
 
 export function fetchUsers() {
   return api
