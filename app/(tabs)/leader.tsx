@@ -51,9 +51,9 @@ export default function LeaderScreen() {
       <Text style={styles.header}>...</Text>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableCell, styles.tableHeaderCell]}>Rank</Text>{" "}
-          <Text style={[styles.tableCell, styles.tableHeaderCell]}>User</Text>{" "}
-          <Text style={[styles.tableCell, styles.tableHeaderCell]}>Points</Text>{" "}
+          <Text style={[styles.tableCell, styles.tableHeaderCell]}>Rank</Text>
+          <Text style={[styles.tableCell, styles.tableHeaderCell]}>User</Text>
+          <Text style={[styles.tableCell, styles.tableHeaderCell]}>Points</Text>
         </View>
         <FlatList
           data={users}
