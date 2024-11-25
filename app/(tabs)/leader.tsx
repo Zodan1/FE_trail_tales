@@ -49,23 +49,32 @@ export default function LeaderScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>...</Text>
-      <FlatList
-        data={users}
-        renderItem={({ item, index }) => (
-          <View style={styles.userRow}>
-            <Text style={styles.rank}>{index + 1}</Text>
-            <Image
-              source={{ uri: item.profile_img }}
-              style={styles.profile_img}
-            />
-            <View style={styles.userInfo}>
-              <Text style={styles.username}>{item.username}</Text>
-              <Text style={styles.points}>{item.points} points</Text>
+      <View style={styles.table}>
+        <View style={styles.tableHeader}>
+          <Text style={[styles.tableCell, styles.tableHeaderCell]}>Rank</Text>{" "}
+          <Text style={[styles.tableCell, styles.tableHeaderCell]}>User</Text>{" "}
+          <Text style={[styles.tableCell, styles.tableHeaderCell]}>Points</Text>{" "}
+        </View>
+        <FlatList
+          data={users}
+          renderItem={({ item, index }) => (
+            <View style={styles.tableRow}>
+              <Text style={styles.tableCell}>{index + 1}</Text>
+              <View style={styles.userCell}>
+                <Image
+                  source={{ uri: item.profile_img }}
+                  style={styles.profile_img}
+                />
+                <Text style={styles.username}>{item.username}</Text>
+              </View>
+              <View style={styles.userInfo}>
+                <Text style={styles.points}>{item.points} points</Text>
+              </View>
             </View>
-          </View>
-        )}
-        keyExtractor={(item) => item.username}
-      />
+          )}
+          keyExtractor={(item) => item.username}
+        />
+      </View>
     </View>
   );
 }
@@ -103,8 +112,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   username: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
+    color: "#00ff00",
   },
   points: {
     fontSize: 16,
@@ -120,5 +130,38 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flexDirection: "row",
     alignItems: "center",
+  },
+  table: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#f9f9f9",
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+  },
+  tableRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  tableCell: {
+    flex: 1,
+    textAlign: "center",
+    paddingVertical: 4,
+    color: "#ffffff",
+  },
+  tableHeaderCell: {
+    fontWeight: "bold",
+    color: "#000000",
+  },
+  userCell: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 2,
   },
 });
