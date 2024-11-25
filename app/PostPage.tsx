@@ -64,7 +64,6 @@ export default function PostPageScreen() {
           <Text style={styles.text}>Post not found.</Text>
           
       )}
-      console.log("Post data is null or undefined.");
 
     </View>
   );
