@@ -28,6 +28,7 @@ export function fetchPosts(username) {
     });
 }
 
+
 export function fetchPostById(post_id,username) {
   return api
     .get(`/posts/${post_id}/${username}`)
@@ -39,6 +40,7 @@ export function fetchPostById(post_id,username) {
       throw error;
     });
 }
+
 
 ////////////
 export function postFavourite(username, post_id) {
@@ -93,3 +95,15 @@ export async function deleteFavourite(username, post_id) {
 //       throw error;
 //     });
 // }
+
+export function fetchUsers() {
+  return api
+    .get("/users")
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching users", error);
+      throw error;
+    });
+}

@@ -7,15 +7,11 @@ import { captureRef } from "react-native-view-shot";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { type ImageSource } from "expo-image";
 
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
 import IconButton from "@/components/IconButton";
 import CircleButton from "@/components/CircleButton";
-import EmojiPicker from "@/components/EmojiPicker";
-import EmojiList from "@/components/EmojiList";
-import EmojiSticker from "@/components/EmojiSticker";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
@@ -32,10 +28,6 @@ export default function Add() {
     undefined
   );
   const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [pickedEmoji, setPickedEmoji] = useState<ImageSource | undefined>(
-    undefined
-  );
   const [status, requestPermission] = MediaLibrary.usePermissions();
   const imageRef = useRef<View>(null);
 
@@ -105,31 +97,62 @@ export default function Add() {
 
   // Image upload and handling
   const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images",
+        allowsEditing: true,
+        aspect: [3, 3],
+        quality: 1,
+      });
 
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-      setShowAppOptions(true);
-    } else {
-      alert("You did not select any image.");
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const assetUri = result.assets[0].uri;
+        setSelectedImage(assetUri);
+        await getImageLocation(assetUri);
+      } else {
+        Alert.alert("You did not select any image.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error selecting image:", error.message);
+      } else {
+        Alert.alert("An unknown error occurred.");
+      }
+    }
+  };
+
+  const getImageLocation = async (uri: string) => {
+    try {
+      const assets = await MediaLibrary.getAssetsAsync({
+        first: 100,
+        mediaType: "photo",
+        sortBy: MediaLibrary.SortBy.default,
+      });
+      const asset = assets.assets.find((asset) => asset.uri === uri);
+      if (asset) {
+        const assetInfo = await MediaLibrary.getAssetInfoAsync(asset.id);
+        if (assetInfo.location) {
+          setLocation({
+            latitude: assetInfo.location.latitude,
+            longitude: assetInfo.location.longitude,
+          });
+        } else {
+          Alert.alert("No location data available for this image.");
+        }
+      } else {
+        Alert.alert("Could not find asset for the selected image.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error fetching location data:", error.message);
+      } else {
+        Alert.alert("An unknown error occurred.");
+      }
     }
   };
 
   const onReset = () => {
     setShowAppOptions(false);
-  };
-
-  const onAddSticker = () => {
-    setIsModalVisible(true);
-  };
-
-  const onModalClose = () => {
-    setIsModalVisible(false);
   };
 
   const onSaveImageAsync = async () => {
@@ -180,16 +203,13 @@ export default function Add() {
           ) : (
             <Text>Loading location...</Text>
           )}
-          {pickedEmoji && (
-            <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
-          )}
         </View>
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
           <View style={styles.optionsRow}>
-            <IconButton icon="refresh" label="Reset" onPress={onReset} />
-            <CircleButton onPress={onAddSticker} />
+            <IconButton icon="refresh" label="Return" onPress={onReset} />
+            <CircleButton onPress={onSaveImageAsync} />
             <IconButton
               icon="save-alt"
               label="Save"
@@ -207,9 +227,6 @@ export default function Add() {
           />
         </View>
       )}
-      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
-      </EmojiPicker>
     </GestureHandlerRootView>
   );
 }
