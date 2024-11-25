@@ -19,7 +19,8 @@ export default function PostPageScreen() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPostById(post_id)
+    const username = "nature_lover"; 
+    fetchPostById(post_id, username)
       .then((data) => {
         setPost(data);
         setLoading(false);

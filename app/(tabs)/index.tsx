@@ -66,7 +66,7 @@ export default function Index() {
   const fetchNearbyPosts = async () => {
     try {
       const response = await fetch(
-        `https://trail-tales-be.onrender.com/api/posts?latitude=${location?.latitude}&longitude=${location?.longitude}&radius=10`
+        `https://trail-tales-be.onrender.com/api/postsByMap?latitude=${location?.latitude}&longitude=${location?.longitude}&radius=20000000000000`
       );
       if (!response.ok) throw new Error("Failed to fetch nearby posts.");
       const data = await response.json();
