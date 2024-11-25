@@ -53,7 +53,7 @@ export default function TestScreen() {
         } else {
           Alert.alert("Image uploaded successfully!");
           // Store the image URL or path in your database as needed
-          console.log("Uploaded image URL:", data?.Key);
+          console.log("Uploaded image URL:", data.path);
         }
 
         getLocation();
