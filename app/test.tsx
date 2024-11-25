@@ -42,7 +42,7 @@ export default function TestScreen() {
         setSelectedImage(photoUri); // Set the selected image
 
         const response = await fetch(photoUri);
-        const blob = await response.blob();
+        const blob = await response.arrayBuffer();
 
         const { data, error } = await supabase.storage
           .from("Images") //replace with TT bucket name
