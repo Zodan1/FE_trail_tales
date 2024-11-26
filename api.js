@@ -28,6 +28,23 @@ export function fetchPosts(username) {
     });
 }
 
+export function postPost(username, post_img, description, location, location_coord) {
+  return api
+    .post("/posts", { username, post_img, description, location, location_coord })
+    .then((response) => {
+      console.log("API response: ", response);  
+      if (response && response.data && response.data.addedPost) {
+        return { success: true, addedPost: response.data.addedPost };
+      } else {
+        throw new Error("Unexpected response structure.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error adding post", error);
+      return { success: false, error: error.message || "Unknown error" };
+    });
+}
+
 
 export function fetchPostById(post_id, username) {
   console.log("Fetching post by ID:", post_id, "and username:", username);

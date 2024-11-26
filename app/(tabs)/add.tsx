@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Image, Alert } from "react-native";
+import { View, StyleSheet, Text, Image, Alert, TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -7,36 +7,32 @@ import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
 import IconButton from "@/components/IconButton";
 import CircleButton from "@/components/CircleButton";
 import supabase from "../../supabaseClient";
+import { postPost } from "@/api";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
-
 interface LocationCoords {
   latitude: number;
   longitude: number;
 }
-
 export default function Add() {
-  // State management
+  const username = 'nature_lover'
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [location, setLocation] = useState<LocationCoords | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined
   );
+  const [description, setDescription] = useState<string>("");
   const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
   const [status, requestPermission] = MediaLibrary.usePermissions();
   const imageRef = useRef<View>(null);
-
   if (status === null) {
     requestPermission();
   }
-
-  // Camera and image handling
   const pickImage = async () => {
     try {
       const permissionResult =
@@ -45,19 +41,17 @@ export default function Add() {
         Alert.alert("Camera access is required to take a photo.");
         return;
       }
-
       const result: ImagePicker.ImagePickerResult =
         await ImagePicker.launchCameraAsync({
-          mediaTypes: "images",
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: [3, 3],
           quality: 1,
         });
-
       if (result.assets && result.assets.length > 0) {
         const photoUri = result.assets[0].uri;
         setPhotoUri(photoUri);
-        setSelectedImage(photoUri); // Set the selected image
+        setSelectedImage(photoUri);
         getLocation();
       } else {
         Alert.alert("No photo taken.");
@@ -70,7 +64,6 @@ export default function Add() {
       }
     }
   };
-
   const getLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -78,7 +71,6 @@ export default function Add() {
         Alert.alert("Permission to access location was denied");
         return;
       }
-
       const currentLocation = await Location.getCurrentPositionAsync({});
       if (currentLocation && currentLocation.coords) {
         setLocation({
@@ -96,17 +88,14 @@ export default function Add() {
       }
     }
   };
-
-  // Image upload and handling
   const pickImageAsync = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: "images",
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [3, 3],
         quality: 1,
       });
-
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const photoUri = result.assets[0].uri;
         setPhotoUri(photoUri);
@@ -123,12 +112,11 @@ export default function Add() {
       }
     }
   };
-
   const getImageLocation = async (uri: string) => {
     try {
       const assets = await MediaLibrary.getAssetsAsync({
         first: 100,
-        mediaType: "photo",
+        mediaType: MediaLibrary.MediaType.photo,
         sortBy: MediaLibrary.SortBy.default,
       });
       const asset = assets.assets.find((asset) => asset.uri === uri);
@@ -153,45 +141,49 @@ export default function Add() {
       }
     }
   };
-
   const onReset = () => {
     setShowAppOptions(false);
+    setDescription("");
   };
-
   const onSaveImageAsync = async () => {
     try {
       if (typeof photoUri === "string") {
         const response = await fetch(photoUri);
         const blob = await response.arrayBuffer();
-
         const { data, error } = await supabase.storage
-          .from("Images") //replace with TT bucket name
+          .from("Images")
           .upload(`images/${new Date().getTime()}.jpg`, blob);
-
         if (error) {
           Alert.alert("Error uploading image:", error.message);
         } else {
           Alert.alert("Image uploaded successfully!");
-          // Store the image URL or path in your database as needed
           console.log("Uploaded image URL:", data.path);
+          // Save image information including description
+          const description = 'test'
+          const testObj = {username: 'yes', img: `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, description: 'test', location: `POINT(${location?.latitude} ${location?.longitude})`, location_coord: `(${location?.latitude}, ${location?.longitude})`}
+          console.log(testObj)
+          postPost(username, `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, description, `POINT(${location?.latitude} ${location?.longitude})`, `(${location?.latitude}, ${location?.longitude})`)
+            .then((body) => {
+              console.log(body)
+            console.log("Post added successfully.");
+            })
         }
       } else {
         Alert.alert("No image to save.");
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert("Error taking photo catch:", error.message);
+        Alert.alert("Error saving image:", error.message);
       }
     }
   };
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.imageContainer}>
         <View ref={imageRef} collapsable={false}>
           <ImageViewer
             imgSource={PlaceholderImage}
-            selectedImage={photoUri || selectedImage} // Display photoUri or selectedImage
+            selectedImage={photoUri || selectedImage}
           />
           {location ? (
             <MapView
@@ -221,6 +213,14 @@ export default function Add() {
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
+          {/* {photoUri && (
+            <TextInput
+              style={styles.descriptionInput}
+              placeholder="Enter image description"
+              value={description}
+              onChangeText={setDescription}
+            />
+          )} */}
           <View style={styles.optionsRow}>
             <IconButton icon="refresh" label="Return" onPress={onReset} />
             <CircleButton onPress={onSaveImageAsync} />
@@ -244,11 +244,10 @@ export default function Add() {
     </GestureHandlerRootView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: "#25292E",
     alignItems: "center",
   },
   imageContainer: {
@@ -274,5 +273,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "black",
     alignItems: "center",
+  },
+  descriptionInput: {
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: "white",
+    color: "black",
   },
 });
