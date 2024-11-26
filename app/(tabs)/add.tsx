@@ -3,7 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useState, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as MediaLibrary from "expo-media-library";
-import { captureRef } from "react-native-view-shot";
+import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -12,6 +12,7 @@ import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
 import IconButton from "@/components/IconButton";
 import CircleButton from "@/components/CircleButton";
+import supabase from "../../supabaseClient";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
@@ -54,8 +55,25 @@ export default function Add() {
         });
 
       if (result.assets && result.assets.length > 0) {
-        setPhotoUri(result.assets[0].uri);
-        setSelectedImage(result.assets[0].uri); // Set the selected image
+        const photoUri = result.assets[0].uri;
+        setPhotoUri(photoUri);
+        setSelectedImage(photoUri); // Set the selected image
+
+        // const response = await fetch(photoUri);
+        // const blob = await response.arrayBuffer();
+
+        // const { data, error } = await supabase.storage
+        //   .from("Images") //replace with TT bucket name
+        //   .upload(`images/${new Date().getTime()}.jpg`, blob);
+
+        // if (error) {
+        //   Alert.alert("Error uploading image:", error.message);
+        // } else {
+        //   Alert.alert("Image uploaded successfully!");
+        //   // Store the image URL or path in your database as needed
+        //   console.log("Uploaded image URL:", data.path);
+        // }
+
         getLocation();
       } else {
         Alert.alert("No photo taken.");
@@ -157,23 +175,38 @@ export default function Add() {
 
   const onSaveImageAsync = async () => {
     try {
-      const localUri = await captureRef(imageRef, {
-        height: 440,
-        quality: 1,
-      });
+      if (imageRef.current) {
+        const localUri = await captureRef(imageRef.current, {
+          format: "jpg",
+          quality: 1,
+        });
+        const response = await fetch(localUri);
+        const blob = await response.arrayBuffer();
 
-      await MediaLibrary.saveToLibraryAsync(localUri);
-      if (localUri) {
-        alert("Saved!");
+        const { data, error } = await supabase.storage
+          .from("Images") //replace with TT bucket name
+          .upload(`images/${new Date().getTime()}.jpg`, blob);
+
+        if (error) {
+          Alert.alert("Error uploading image:", error.message);
+        } else {
+          Alert.alert("Image uploaded successfully!");
+          // Store the image URL or path in your database as needed
+          console.log("Uploaded image URL:", data.path);
+        }
+      } else {
+        Alert.alert("View Ref not found");
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error taking photo catch:", error.message);
+      }
     }
   };
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View style={styles.imageContainer}>
+      <ViewShot style={styles.imageContainer}>
         <View ref={imageRef} collapsable={false}>
           <ImageViewer
             imgSource={PlaceholderImage}
@@ -204,7 +237,7 @@ export default function Add() {
             <Text>Loading location...</Text>
           )}
         </View>
-      </View>
+      </ViewShot>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
           <View style={styles.optionsRow}>
