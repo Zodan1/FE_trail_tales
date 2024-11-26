@@ -58,22 +58,6 @@ export default function Add() {
         const photoUri = result.assets[0].uri;
         setPhotoUri(photoUri);
         setSelectedImage(photoUri); // Set the selected image
-
-        // const response = await fetch(photoUri);
-        // const blob = await response.arrayBuffer();
-
-        // const { data, error } = await supabase.storage
-        //   .from("Images") //replace with TT bucket name
-        //   .upload(`images/${new Date().getTime()}.jpg`, blob);
-
-        // if (error) {
-        //   Alert.alert("Error uploading image:", error.message);
-        // } else {
-        //   Alert.alert("Image uploaded successfully!");
-        //   // Store the image URL or path in your database as needed
-        //   console.log("Uploaded image URL:", data.path);
-        // }
-
         getLocation();
       } else {
         Alert.alert("No photo taken.");
@@ -124,9 +108,10 @@ export default function Add() {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const assetUri = result.assets[0].uri;
-        setSelectedImage(assetUri);
-        await getImageLocation(assetUri);
+        const photoUri = result.assets[0].uri;
+        setPhotoUri(photoUri);
+        setSelectedImage(photoUri);
+        getImageLocation(photoUri);
       } else {
         Alert.alert("You did not select any image.");
       }
@@ -175,12 +160,8 @@ export default function Add() {
 
   const onSaveImageAsync = async () => {
     try {
-      if (imageRef.current) {
-        const localUri = await captureRef(imageRef.current, {
-          format: "jpg",
-          quality: 1,
-        });
-        const response = await fetch(localUri);
+      if (typeof photoUri === "string") {
+        const response = await fetch(photoUri);
         const blob = await response.arrayBuffer();
 
         const { data, error } = await supabase.storage
@@ -195,7 +176,7 @@ export default function Add() {
           console.log("Uploaded image URL:", data.path);
         }
       } else {
-        Alert.alert("View Ref not found");
+        Alert.alert("No image to save.");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -206,7 +187,7 @@ export default function Add() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <ViewShot style={styles.imageContainer}>
+      <View style={styles.imageContainer}>
         <View ref={imageRef} collapsable={false}>
           <ImageViewer
             imgSource={PlaceholderImage}
@@ -237,7 +218,7 @@ export default function Add() {
             <Text>Loading location...</Text>
           )}
         </View>
-      </ViewShot>
+      </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
           <View style={styles.optionsRow}>
