@@ -24,6 +24,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     <TouchableOpacity
       onPress={() => router.push(`/PostPage?post_id=${post.post_id}`)}
     >
+
       <View style={styles.card}>
         <Image source={{ uri: post.post_img }} style={styles.image} />
         <View style={styles.textContainer}>

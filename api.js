@@ -29,11 +29,13 @@ export function fetchPosts(username) {
 }
 
 
-export function fetchPostById(post_id,username) {
+export function fetchPostById(post_id, username) {
+  console.log("Fetching post by ID:", post_id, "and username:", username);
   return api
     .get(`/posts/${post_id}/${username}`)
     .then((response) => {
-      return response.data.post;
+      console.log("API response for post fetch:", response.data); 
+      return response.data;
     })
     .catch((error) => {
       console.error("Error fetching post by ID", error);
