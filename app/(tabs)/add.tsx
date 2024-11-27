@@ -173,7 +173,7 @@ export default function Add() {
           Alert.alert("Image uploaded successfully!");
           console.log("Uploaded image URL:", data.path);
           // Save image information including description
-          const description = "test";
+
           const testObj = {
             username: "nature_lover",
             img: `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`,
