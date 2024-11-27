@@ -196,6 +196,7 @@ export default function Add() {
         setDescription("");
         setLocation(null);
         setShowAppOptions(false);
+
         }
       } else {
         Alert.alert("No image to save.");
