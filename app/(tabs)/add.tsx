@@ -125,31 +125,25 @@ export default function Add() {
       }
     }
   };
-  const getImageLocation = async (uri: string) => {
+  const getImageLocation = async (photoUri: string) => {
     try {
-      const assets = await MediaLibrary.getAssetsAsync({
-        first: 100,
-        mediaType: MediaLibrary.MediaType.photo,
-        sortBy: MediaLibrary.SortBy.default,
-      });
-
-      const asset = assets.assets.find((asset) => asset.uri === uri);
-      if (asset) {
-        const assetInfo = await MediaLibrary.getAssetInfoAsync(asset.id);
-        if (assetInfo.location) {
-          setLocation({
-            latitude: assetInfo.location.latitude,
-            longitude: assetInfo.location.longitude,
-          });
-        } else {
-          Alert.alert("No location data available for this image.");
-        }
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+        return;
+      }
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      if (currentLocation && currentLocation.coords) {
+        setLocation({
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        });
       } else {
-        Alert.alert("Could not find asset for the selected image.");
+        Alert.alert("Could not fetch location.");
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert("Error fetching location data:", error.message);
+        Alert.alert("Error fetching location:", error.message);
       } else {
         Alert.alert("An unknown error occurred.");
       }
