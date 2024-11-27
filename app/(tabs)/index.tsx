@@ -130,11 +130,7 @@ export default function Index() {
       ) : (
         <Text>No location available.</Text>
       )}
-      <Text style={styles.text}>Home screen</Text>
-
-      <Link href="/test" style={styles.button}>
-        Go to test screen
-      </Link>
+      <Text style={styles.text}>Welcome!</Text>
     </View>
   );
 }
@@ -147,7 +143,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   text: {
-    color: "#fff",
+    color: "#FFA500",
+    fontSize: 18,
   },
   button: {
     fontSize: 20,
