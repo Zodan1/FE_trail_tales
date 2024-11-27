@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Image, ActivityIndicator, FlatList, TouchableOpacity, } from "react-native";
-import { fetchUserByUsername, fetchPosts, fetchFavourites } from "../../api";
+import { Text, View, StyleSheet, Image, ActivityIndicator, FlatList, TouchableOpacity, Alert } from "react-native";
+import { fetchUserByUsername, fetchPosts, fetchFavourites, deletePost as deletePostApi, patchUser } from "../../api"; 
 import { useRouter } from "expo-router";
 import { useIsFocused } from "@react-navigation/native";
 import PostCard from "@/components/PostCards";
-
 
 interface User {
   username: string;
@@ -12,6 +11,7 @@ interface User {
   profile_img: string;
   points: number;
 }
+
 interface Post {
   post_id: number;
   username: string;
@@ -25,7 +25,6 @@ interface Post {
   };
 }
 
-// Rank logic
 const getRank = (points: number) => {
   const ranks = [
     { min: 0, max: 10, name: "No Rank", symbol: "⚪️" },
@@ -40,11 +39,11 @@ const getRank = (points: number) => {
 };
 
 export default function AboutScreen() {
-  const [user, setUser] = useState<User | null>(null); 
+  const [user, setUser] = useState<User | null>(null);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [favorites, setFavorites] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<string>("posts");
   const { current, next } = getRank(user?.points || 0);
   const router = useRouter();
@@ -52,25 +51,59 @@ export default function AboutScreen() {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    const username = "nature_lover"; 
+    const username = "nature_lover";
 
-    if(isFocused){ 
+    if (isFocused) {
       Promise.all([fetchUserByUsername(username), fetchPosts(username), fetchFavourites(username)])
-      .then(([userData, allPosts, favoritePosts]) => {
-        console.log("fetchUserByUsername api call wih user data, allposts, favoritePosts");
-        setUser(userData);
-        const filteredPosts = allPosts.filter((post: Post) => post.username === username);
-        setUserPosts(filteredPosts);
-        setFavorites(favoritePosts); 
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching user:", error); 
-        setError("Failed to load user profile.");
-        setLoading(false);
-      });
+        .then(([userData, allPosts, favoritePosts]) => {
+          setUser(userData);
+          const filteredPosts = allPosts.filter((post: Post) => post.username === username);
+          setUserPosts(filteredPosts);
+          setFavorites(favoritePosts);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching user:", error);
+          setError("Failed to load user profile.");
+          setLoading(false);
+        });
     }
   }, [isFocused]);
+
+  const handleDelete = (postId: number) => {
+    Alert.alert(
+      "Delete Post",
+      "Are you sure you want to delete this post?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => deletePost(postId),
+        },
+      ]
+    );
+  };
+
+  const deletePost = async (postId: number) => {
+    try {
+      const response = await deletePostApi(postId); 
+      if (response.success) {
+        setUserPosts(userPosts.filter((post) => post.post_id !== postId));
+        if (user) {
+        const updatedPoints = user.points - 3; 
+        await patchUser(user.username, { points: updatedPoints });
+        setUser((prevUser) => prevUser ? { ...prevUser, points: updatedPoints } : prevUser);
+      }
+      } else {
+        console.error("Error deleting post");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -92,22 +125,15 @@ export default function AboutScreen() {
     <View style={styles.container}>
       {/* Profile Section */}
       <View style={styles.header}>
-        <Image
-          source={{ uri: user?.profile_img }}
-          style={styles.profileImage}
-        />
+        <Image source={{ uri: user?.profile_img }} style={styles.profileImage} />
         <View>
           <View style={styles.userInfo}>
             <Text style={styles.text}>Username: {user?.username}</Text>
             <Text style={styles.username}>{user?.name}</Text>
-            {/* Current Rank Button with Animal Symbol */}
             <View style={styles.rankButtonsContainer}>
               <TouchableOpacity style={styles.rankButton}>
-                <Text style={styles.rankText}>
-                  Current Rank {current.symbol}
-                </Text>
+                <Text style={styles.rankText}>Current Rank {current.symbol}</Text>
               </TouchableOpacity>
-              {/* Next Rank Button with Animal Symbol */}
               {next && (
                 <TouchableOpacity style={styles.rankButton}>
                   <Text style={styles.rankText}>Next Rank {next.symbol}</Text>
@@ -115,16 +141,14 @@ export default function AboutScreen() {
               )}
             </View>
             <View>
-              {/* Total Points Button */}
               <TouchableOpacity style={styles.pointsButton}>
-                <Text style={styles.pointsText}>
-                  Total Points: {user?.points}
-                </Text>
+                <Text style={styles.pointsText}>Total Points: {user?.points}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </View>
+
       {/* Buttons for posts and favorites */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -140,22 +164,25 @@ export default function AboutScreen() {
           <Text style={styles.buttonText}>Favorites</Text>
         </TouchableOpacity>
       </View>
+
       {/* Display posts or favorites */}
       <FlatList
         data={view === "posts" ? userPosts : favorites}
         keyExtractor={(item) => item.post_id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.postCard}
-            onPress={() => router.push(`/PostPage?post_id=${item.post_id}`)}
-          >
-                        <PostCard post={item} />
-
-          </TouchableOpacity>
+          <View style={styles.postCard}>
+            <PostCard post={item} />
+            {view === "posts" && (
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDelete(item.post_id)}
+            >
+              <Text style={styles.deleteText}>Delete</Text>
+              </TouchableOpacity>
+              )}
+          </View>
         )}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No posts or favorites available.</Text>
-        }
+        ListEmptyComponent={<Text style={styles.emptyText}>No posts or favorites available.</Text>}
       />
     </View>
   );
@@ -164,13 +191,13 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 2,
-    backgroundColor: "#25292E",
-    padding: 16,
+    backgroundColor: "#25292E", 
+    overflow: "hidden",
+    padding: 0,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    //marginBottom: 0,
     width: "66%",
     height: "35%",
   },
@@ -246,13 +273,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   postCard: {
-    width: 500,
-    height: 500,
-    backgroundColor: "#333",
-    borderRadius: 10,
+    width: "100%", 
     marginVertical: 10,
-    padding: 10,
-    
+    padding: 0, 
+    borderRadius: 10, 
   },
   postImage: {
     width: "100%",
@@ -269,6 +293,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
   },
+  deleteButton: {
+    position: "absolute",
+    bottom: 50,
+    right: 10,
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 50,
+  },
+  deleteText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
   errorText: {
     color: "red",
     fontSize: 16,
@@ -276,4 +312,4 @@ const styles = StyleSheet.create({
   text: {
     color: "#fff",
   },
-}); 
+});

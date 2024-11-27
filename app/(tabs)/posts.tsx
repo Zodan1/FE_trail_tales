@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import { fetchPosts, postFavourite, deleteFavourite, fetchFavourites } from "@/api";
 import PostCard from "@/components/PostCards";
+import { useIsFocused } from "@react-navigation/native";
 
 interface Post {
   post_id: number;
@@ -25,8 +26,12 @@ export default function PostsScreen() {
   const [error, setError] = useState<string | null>(null);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
 
+    const isFocused = useIsFocused();
+
+
   useEffect(() => {
-  const fetchPostsAndFavorites = async () => {
+    if (isFocused) { 
+      const fetchPostsAndFavorites = async () => {
     try {
       const postsData = await fetchPosts(username);
       const favoritePosts = await fetchFavourites(username); 
@@ -43,7 +48,9 @@ export default function PostsScreen() {
   };
 
   fetchPostsAndFavorites();
-}, [username]);
+    }
+  
+}, [isFocused,username]);
   // Add or remove post from favorites
   const toggleLike = async (postId: number) => {
   setLikedPosts((prev) => {
