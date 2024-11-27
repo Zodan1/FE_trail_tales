@@ -50,7 +50,9 @@ export default function LeaderScreen() {
     <View style={styles.container}>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableCell, styles.tableHeaderCell]}>Rank</Text>
+          <Text style={[styles.tableCell, styles.tableHeaderCell]}>
+            Position
+          </Text>
           <Text style={[styles.tableCell, styles.tableHeaderCell]}>User</Text>
           <Text style={[styles.tableCell, styles.tableHeaderCell]}>Points</Text>
         </View>
@@ -81,13 +83,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#25292E",
-    justifyContent: "center",
-    alignItems: "center",
     padding: 16,
   },
   errorText: {
     color: "red",
     fontSize: 16,
+    textAlign: "center",
   },
   text: {
     color: "#fff",
@@ -101,14 +102,65 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "100%",
   },
-  profile_img: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+  header: {
+    fontSize: 24,
+    marginBottom: 16,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  table: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    backgroundColor: "#32363B",
+    overflow: "hidden",
+  },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#4A4E56",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+  },
+  tableHeaderCell: {
+    flex: 1,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#FFFFFF",
+    fontSize: 14,
+  },
+  tableRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderColor: "#44484E",
+  },
+  tableCell: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 14,
+    color: "#FFFFFF",
+    paddingHorizontal: 8,
+  },
+  userCell: {
+    flex: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
   },
   userInfo: {
     flex: 1,
+    alignItems: "flex-end",
+    paddingHorizontal: 8,
+  },
+  profile_img: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
   },
   username: {
     fontSize: 16,
@@ -116,51 +168,12 @@ const styles = StyleSheet.create({
     color: "#FFA500",
   },
   points: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: 14,
+    color: "#CFCFCF",
   },
   rank: {
     fontSize: 18,
     textAlign: "center",
-  },
-  header: {
-    fontSize: 24,
-    marginBottom: 20,
-    fontWeight: "bold",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  table: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  tableHeader: {
-    flexDirection: "row",
-    backgroundColor: "#f9f9f9",
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
-  },
-  tableRow: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
-    alignItems: "center",
-    paddingVertical: 8,
-  },
-  tableCell: {
-    flex: 1,
-    textAlign: "center",
-    paddingVertical: 4,
-    color: "#ffffff",
-  },
-  tableHeaderCell: {
-    fontWeight: "bold",
-    color: "#000000",
-  },
-  userCell: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 2,
+    color: "#FFFFFF",
   },
 });
