@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   flex: 2,
   backgroundColor: "#25292E", 
   overflow: "hidden",
-  padding: 20,
+  padding: 10,
   },
   header: {
   flexDirection: "row",
