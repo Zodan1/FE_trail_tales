@@ -1,7 +1,22 @@
 import { Tabs } from "expo-router";
-
+import { View, Image, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
+const LogoTitle = () => {
+  return (
+    <Image
+      source={require("@/assets/images/ttIcon.png")} // Adjust the path to your logo image
+      style={styles.logo} // Adjust to your logo size
+      resizeMode="contain"
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  logoContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  logo: { width: 60, height: 60 },
+});
 
 export default function TabLayout() {
   return (
@@ -16,12 +31,13 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: "#25292e",
         },
+        headerTitleAlign: "center",
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Trail Tales",
+          headerTitle: () => <LogoTitle />,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home-sharp" : "home-outline"}
@@ -85,6 +101,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      </Tabs>
+    </Tabs>
   );
 }

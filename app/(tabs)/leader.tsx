@@ -48,7 +48,6 @@ export default function LeaderScreen() {
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>...</Text>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableCell, styles.tableHeaderCell]}>Rank</Text>
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#00ff00",
+    color: "#FFA500",
   },
   points: {
     fontSize: 16,
