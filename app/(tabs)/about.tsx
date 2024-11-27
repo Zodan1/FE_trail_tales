@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   flex: 2,
   backgroundColor: "#25292E", 
   overflow: "hidden",
-  padding: 0,
+  padding: 20,
   },
   header: {
   flexDirection: "row",
@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
   height: 100,
   borderRadius: 50,
   marginRight: 20, 
+  
   },
   userInfo: {
   marginLeft: 20,
