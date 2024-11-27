@@ -38,6 +38,7 @@ export default function TabLayout() {
         name="index"
         options={{
           headerTitle: () => <LogoTitle />,
+          title: "Trail Tales",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home-sharp" : "home-outline"}
@@ -50,7 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="posts"
         options={{
-          title: "Post",
+          title: "Posts",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "newspaper" : "newspaper-outline"}
@@ -91,7 +92,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="about"
         options={{
-          title: "About",
+          title: "Profile",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "person" : "person-outline"}
