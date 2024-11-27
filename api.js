@@ -30,7 +30,7 @@ export function fetchPosts(username) {
 
 export function postPost(username, post_img, description, location, location_coord) {
   return api
-    .post("/posts", { username, post_img, description, location, location_coord })
+    .post("/post", { username, post_img, description, location, location_coord })
     .then((response) => {
       console.log("API response: ", response);  
       if (response && response.data && response.data.addedPost) {

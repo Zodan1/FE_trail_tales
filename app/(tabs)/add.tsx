@@ -160,9 +160,8 @@ export default function Add() {
           console.log("Uploaded image URL:", data.path);
           // Save image information including description
           const description = 'test'
-          const testObj = {username: 'yes', img: `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, description: 'test', location: `POINT(${location?.latitude} ${location?.longitude})`, location_coord: `(${location?.latitude}, ${location?.longitude})`}
-          console.log(testObj)
-          postPost(username, `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, description, `POINT(${location?.latitude} ${location?.longitude})`, `(${location?.latitude}, ${location?.longitude})`)
+          // console.log(username, `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, 'test', `POINT(${location?.latitude} ${location?.longitude})`, `(${location?.latitude}, ${location?.longitude})`)
+          postPost(username, `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, 'asdbash sdh aodahdo hashdia sada', `POINT(${location?.latitude} ${location?.longitude})`, `(${location?.latitude}, ${location?.longitude})`)
             .then((body) => {
               console.log(body)
             console.log("Post added successfully.");
