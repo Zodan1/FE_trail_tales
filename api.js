@@ -33,14 +33,14 @@ export function postPost(username, post_img, description, location, location_coo
     .post("/post", { username, post_img, description, location, location_coord })
     .then((response) => {
       console.log("API response: ", response);  
-      if (response && response.data && response.data.addedPost) {
-        return { success: true, addedPost: response.data.addedPost };
+      if (response && response.data && response.data.post) {
+        return { success: true, addedPost: response.data.post };
       } else {
-        throw new Error("Unexpected response structure.");
-      }
+        return { success: false, error: "Unexpected response structure." };
+      } 
     })
     .catch((error) => {
-      console.error("Error adding post", error);
+      console.error("Error adding post:", error.response ? error.response.data : error.message);
       return { success: false, error: error.message || "Unknown error" };
     });
 }
@@ -92,7 +92,6 @@ export function fetchFavourites(username) {
 export async function deleteFavourite(username, post_id) {
   try {
     const response = await api.delete(`/users/${username}/favourites/${post_id}`);
-    // Check for successful deletion (204 No Content)
     if (response.status === 204) {
       return { success: true };
     } else {
@@ -113,5 +112,37 @@ export function fetchUsers() {
     .catch((error) => {
       console.error("Error fetching users", error);
       throw error;
+    });
+}
+
+///
+export function deletePost(postId) {
+  return api
+    .delete(`/posts/${postId}`)
+    .then((response) => {
+      if (response.status === 204) {
+        return { success: true };
+      }
+      throw new Error("Failed to delete the post");
+    })
+    .catch((error) => {
+      console.error("Error deleting post", error);
+      return { success: false, error: error.message || "Unknown error" };
+    });
+}
+
+export function patchUser(username, updateData) {
+  return api
+    .patch(`/users/${username}`, updateData)
+    .then((response) => {
+      if (response.data && response.data.user) {
+        return { success: true, updatedUser: response.data.user };
+      } else {
+        throw new Error("Unexpected response structure.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error updating user", error);
+      return { success: false, error: error.message || "Unknown error" };
     });
 }
