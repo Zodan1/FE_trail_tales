@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text, Image, Alert, TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useState, useRef,useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as MediaLibrary from "expo-media-library";
 import ViewShot, { captureRef } from "react-native-view-shot";
@@ -15,9 +15,7 @@ import supabase from "../../supabaseClient";
 import { postPost, patchUser, fetchUserByUsername } from "@/api";
 import { useIsFocused } from "@react-navigation/native";
 
-
 const PlaceholderImage = require("@/assets/images/background-image.png");
-
 
 interface LocationCoords {
   latitude: number;
@@ -25,7 +23,7 @@ interface LocationCoords {
 }
 export default function Add() {
   const isFocused = useIsFocused();
-  const username = 'nature_lover'
+  const username = "nature_lover";
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [location, setLocation] = useState<LocationCoords | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
@@ -44,7 +42,7 @@ export default function Add() {
       setLocation(null);
       setSelectedImage(undefined);
       setDescription("");
-      setShowAppOptions(false);  
+      setShowAppOptions(false);
     }
   }, [isFocused]);
   const pickImage = async () => {
@@ -57,7 +55,7 @@ export default function Add() {
       }
       const result: ImagePicker.ImagePickerResult =
         await ImagePicker.launchCameraAsync({
-          mediaTypes: ['images', 'videos'],
+          mediaTypes: ["images", "videos"],
           allowsEditing: true,
           aspect: [3, 3],
           quality: 1,
@@ -105,14 +103,14 @@ export default function Add() {
   const pickImageAsync = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
+        mediaTypes: ["images"],
         allowsEditing: true,
         aspect: [3, 3],
         quality: 1,
       });
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const photoUri = result.assets[0].uri;
-        console.log('Selected image URI:', photoUri);
+        console.log("Selected image URI:", photoUri);
         setPhotoUri(photoUri);
         setSelectedImage(photoUri);
         getImageLocation(photoUri);
@@ -134,7 +132,7 @@ export default function Add() {
         mediaType: MediaLibrary.MediaType.photo,
         sortBy: MediaLibrary.SortBy.default,
       });
-      
+
       const asset = assets.assets.find((asset) => asset.uri === uri);
       if (asset) {
         const assetInfo = await MediaLibrary.getAssetInfoAsync(asset.id);
@@ -175,28 +173,43 @@ export default function Add() {
           Alert.alert("Image uploaded successfully!");
           console.log("Uploaded image URL:", data.path);
           // Save image information including description
-          const description = 'test'
-          const testObj = {username: 'nature_lover', img: `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, description: 'test', location: `POINT(${location?.latitude} ${location?.longitude})`, location_coord: `(${location?.latitude}, ${location?.longitude})`}
-          console.log(testObj)
-          postPost(username, `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`, description, `POINT(${location?.latitude} ${location?.longitude})`, `(${location?.latitude}, ${location?.longitude})`)
-            .then(async (body) => {
-              console.log(body);
-              if (body.success) {
-                const currentUser = await fetchUserByUsername(testObj.username);
-                if (currentUser) {
-                  const updatedPoints = (currentUser.points || 0) + 3; // Update points
-                  const updatedUser = await patchUser(testObj.username, { points: updatedPoints });
-                }
-              } else {
-                Alert.alert("Error", body.error || "An error occurred while adding the post.");
+          const description = "test";
+          const testObj = {
+            username: "nature_lover",
+            img: `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`,
+            description: "test",
+            location: `POINT(${location?.latitude} ${location?.longitude})`,
+            location_coord: `(${location?.latitude}, ${location?.longitude})`,
+          };
+          console.log(testObj);
+          postPost(
+            username,
+            `https://azktqvfywfwnqcktucbs.supabase.co/storage/v1/object/public/Images/${data.path}`,
+            description,
+            `POINT(${location?.latitude} ${location?.longitude})`,
+            `(${location?.latitude}, ${location?.longitude})`
+          ).then(async (body) => {
+            console.log(body);
+            if (body.success) {
+              const currentUser = await fetchUserByUsername(testObj.username);
+              if (currentUser) {
+                const updatedPoints = (currentUser.points || 0) + 3; // Update points
+                const updatedUser = await patchUser(testObj.username, {
+                  points: updatedPoints,
+                });
               }
-            });
+            } else {
+              Alert.alert(
+                "Error",
+                body.error || "An error occurred while adding the post."
+              );
+            }
+          });
           setPhotoUri(null);
-        setSelectedImage(undefined);
-        setDescription("");
-        setLocation(null);
-        setShowAppOptions(false);
-
+          setSelectedImage(undefined);
+          setDescription("");
+          setLocation(null);
+          setShowAppOptions(false);
         }
       } else {
         Alert.alert("No image to save.");
@@ -206,7 +219,6 @@ export default function Add() {
         Alert.alert("Error saving image:", error.message);
       }
     }
-  
   };
 
   return (
@@ -245,6 +257,14 @@ export default function Add() {
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
+          {photoUri && (
+            <TextInput
+              style={styles.descriptionInput}
+              placeholder="Enter image description"
+              value={description}
+              onChangeText={setDescription}
+            />
+          )}
           <View style={styles.optionsRow}>
             <IconButton icon="refresh" label="Return" onPress={onReset} />
             <CircleButton onPress={onSaveImageAsync} />
