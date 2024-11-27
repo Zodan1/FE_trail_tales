@@ -15,7 +15,7 @@ import supabase from "../../supabaseClient";
 import { postPost, patchUser, fetchUserByUsername } from "@/api";
 import { useIsFocused } from "@react-navigation/native";
 
-const PlaceholderImage = require("@/assets/images/background-image.png");
+const PlaceholderImage = require("@/assets/images/tiger.jpg");
 
 interface LocationCoords {
   latitude: number;

@@ -130,7 +130,6 @@ export default function Index() {
       ) : (
         <Text>No location available.</Text>
       )}
-      <Text style={styles.text}>Welcome!</Text>
     </View>
   );
 }
