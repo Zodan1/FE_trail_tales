@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#32363B",
     overflow: "hidden",
+    height: "100%"
   },
   tableHeader: {
     flexDirection: "row",
