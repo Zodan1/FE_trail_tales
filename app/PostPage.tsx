@@ -59,8 +59,8 @@ export default function PostPageScreen() {
       {post ? (
         <View style={styles.container}>
           <Image source={{ uri: post.post_img }} style={styles.postImage} />
-          <Text style={styles.text}>Username: {post.username}</Text>
-          <Text style={styles.text}>Description: {post.description}</Text>
+          <Text style={styles.text}>Captured By: {post.username}</Text>
+          <Text style={styles.text}> {post.description}</Text>
           <Text style={styles.text}>
             Posted on: {new Date(post.created_at).toLocaleString()}
           </Text>
@@ -68,7 +68,6 @@ export default function PostPageScreen() {
             Location: {post.location_coord.x} , {post.location_coord.y}
           </Text>
           <Text>
-            location ? (
             <MapView
               style={styles.map}
               initialRegion={{
@@ -89,7 +88,6 @@ export default function PostPageScreen() {
                 <Ionicons name="location" size={24} color="red" />
               </Marker>
             </MapView>
-            )
           </Text>
         </View>
       ) : (
@@ -102,13 +100,13 @@ export default function PostPageScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fffafa",
+    backgroundColor: "#25292E",
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
   },
   text: {
-    color: "#000000",
+    color: "#FFA500",
     fontSize: 18,
     marginVertical: 4,
   },
@@ -116,15 +114,16 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 10,
-    marginBottom: 16,
+    marginBottom: 5,
   },
   map: {
     flex: 1,
-    width: 320,
-    height: 200,
-    borderRadius: 18,
+    width: 300,
+    height: 300,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: "black",
     alignItems: "center",
+    marginTop: 5,
   },
 });
