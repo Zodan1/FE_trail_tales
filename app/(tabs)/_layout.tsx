@@ -15,7 +15,7 @@ const LogoTitle = () => {
 
 const styles = StyleSheet.create({
   logoContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  logo: { width: 80, height: 80 },
+  logo: { width: 80, height: 80, borderRadius: 50, padding: 52 },
 });
 
 export default function TabLayout() {
